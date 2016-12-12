@@ -157,6 +157,112 @@ int quickSort(int *a, int l, int r)
   return 0;
 }
 
+int min_heapUp(int * a, int cnt)
+{
+    int i;
+
+    for(i = cnt;i > 0 && a[i] > a[(i-1)/2];i = (i-1)/2) {
+        swap(&a[i], &a[(i-1)/2]);
+    }
+
+    return 0;
+}
+
+int min_heapAdd(int * a, int cnt, int b)
+{
+    a[cnt] = b;
+    min_heapUp(a, cnt);
+
+    return 0;
+}
+
+void MinHeapFixdown(int a[], int i, int n)  
+{  
+    int j, temp;  
+  
+    temp = a[i];  
+    j = 2 * i + 1;  
+    while (j < n)  
+    {  
+        if (j + 1 < n && a[j + 1] < a[j]) //在左右孩子中找最小的  
+            j++;  
+  
+        if (a[j] >= temp)  
+            break;  
+  
+        a[i] = a[j];     //把较小的子结点往上移动,替换它的父结点  
+        i = j;  
+        j = 2 * i + 1;  
+    }  
+    a[i] = temp;  
+} 
+
+int min_heapDown(int *a, int cnt, int start)
+{
+    int parent, min, child;
+    
+    parent = start;
+
+    child = 2 * parent + 1;
+    
+    while(child <= cnt) {
+
+      min = a[child];
+      
+      if(((child + 1) <= cnt) && a[child] > a[child + 1]) min = a[++child];
+
+      if(min > a[parent]) break;
+
+      swap(&a[child], &a[parent]);
+
+      parent = child;
+    
+      child = 2 * parent + 1;
+    }
+
+    return 0;
+}
+
+int min_heapDel(int *a, int cnt)
+{
+    swap(&a[0], &a[cnt]);
+    min_heapDown(a, cnt - 1, 0);//cnt -1
+    //MinHeapFixdown(a, 0, cnt - 1);
+    return 0;
+}
+
+int min_heapSort(int *a, int cnt)
+{
+    int i;
+    for(i = (cnt - 1) / 2;i >= 0;i--) { // start and end
+       min_heapDown(a, cnt, i);
+      //  MinHeapFixdown(a, i, cnt);
+    }
+   
+    for(i = cnt;i > 0;i--){// start and end
+
+        min_heapDel(a, i);
+    }
+
+    return 0;
+}
+
+int findDupNum(int *a, int num)
+{
+    int i, index;
+    for(i = 0;i < num; i++) {
+        index = (a[i] > num? a[i] - num : a[i]);//using radix sort concept
+
+        if(a[index] > num) { // already found once
+            return index;
+        } else {
+            a[index] += num; 
+        }
+    }
+
+    return -1;
+}
+
 int swap(int * x, int * y)
 {
     if(NULL == x || NULL == y) {
@@ -181,13 +287,17 @@ void printResult(int cnt, int * a)
 
 void main(int argc, char * argv[])
 {
-    int a[] = {5,2,3,2342,34,56,674,8768,12,414,3452};
+    int b[] = {2, 5, 2, 8, 3, 4, 3, 1, 0};
+    int a[] = {9, 12, 17, 30, 50, 20, 60, 65, 4, 19, 18};
+    //int a[] = {5,2,3,2342,34,56,674,8768,12,414,3452};
     int * p = (int *) malloc(sizeof(a));
     
-    quickSort(a, 0, sizeof(a)/sizeof(int) - 1);
+   // min_heapSort(a, sizeof(a)/sizeof(int) - 1);
+    //quickSort(a, 0, sizeof(a)/sizeof(int) - 1);
     //mergeSort(a, 0, sizeof(a)/sizeof(int) - 1, p);
     //bubbleSort(sizeof(a)/sizeof(int), a);
     //insertSort(sizeof(a)/sizeof(int), a);
+    printf("the repeated num is %d \n",findDupNum(b, sizeof(b)/sizeof(int)));
     printResult(sizeof(a)/sizeof(int), a);
     
     free(p);
