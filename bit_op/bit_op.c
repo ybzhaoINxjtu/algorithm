@@ -43,6 +43,47 @@ int ffs(int a)
 
 }
 
+int fls(int a)
+{
+  int loc = 0;
+  
+  if(0 == a) return -1;
+
+  if(a & (0xffff << 16)) {
+      //high one bit in low 16 bit 
+      loc += 16;
+      a >>= 16;
+  }
+
+  if(a & (0xff << 8)) {
+      //high one bit in low 8 bit 
+      loc += 8;
+      a >>= 8;
+  }
+  
+  if(a & (0xf << 4)) {
+      //high one bit in high 4 bit 
+      loc += 4;
+      a >>= 4;
+  }
+  
+  printf("a is 0x%x \n", a );
+  if(a & (0x3 << 2)) {
+      //high one bit in high 2 bit
+      printf("a is 0x%x \n", a & (0x3 << 2) );
+      loc += 2;
+      a >>= 2;
+  }
+  
+  if(a & (0x1 << 1)) {
+      //high one bit in high bit 
+      loc += 1;
+  }
+
+  return loc;
+}
+
+
 int my_swap(int *a, int *b)
 {
     if(b == a) return -1;
@@ -139,7 +180,8 @@ int countTotalOnes(int a)
 
 int main(int argc, char * argv[])
 {
-    int c,d,a = 0x1000000;
+    int c,d,a = 0x07000170;
+    int g = 0x07000100;
     int b[] = {1, 3, 5, 4, 3, 5, 1};
     int x[] = {0, 1, 3, 5, 4, 3, 5, 1};
     int y[] = {0,1,2,3,3,2,1,3,1,2,7,0,0};
@@ -148,9 +190,10 @@ int main(int argc, char * argv[])
         a = atoi(argv[1]);
     }
 
-    printf("the input is 0x%x, %d, %s \n", a, argc, argv[1]);
+    //printf("the input is 0x%x, %d, %s \n", a, argc, argv[1]);
 
-    printf("first bit is in the %d bit \n", ffs(a));
+    printf("first bit is in the %d bit \n", ffs(g));
+    printf("first bit is in the %d bit \n", fls(g));
 
     printf("the lonely one is %d \n", findLonelyOne(b, sizeof(b)/sizeof(int)));
 
